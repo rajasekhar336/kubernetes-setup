@@ -1,0 +1,60 @@
+>>>>>>>> create aws cluster <<<<<<<<<<<<<<<<<<<<  (createcluster file in this folder only)  wait for 20 to 30mins
+
+ekactl create cluster -f createcluster.yaml
+ 
+
+>>>>>>  install helm   <<<<<<<<<<<<<<<<<<<<<<<<<< (managing kubernetes cluster)
+
+ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  chmod 700 get_helm.sh
+  ./get_helm.sh
+
+     or 
+visit : https://helm.sh/docs/using_helm/#installing-helm
+
+>>>>>>>>>>>>> setup role for load balancer <<<<<<<<<<<<<<<<
+
+ curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/iam_policy.json
+ aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json
+
+
+ **********create iam oidc  provider and map it to the above created iam service account***
+ eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster my-awesome-cluster --approve
+ 
+ *********create iam serviceaccounts for load balancer **********************
+
+ eksctl create iamserviceaccount \
+  --cluster my-awesome-cluster \
+  --region ap-south-1 \
+  --namespace kube-system \
+  --name aws-load-balancer-controller \
+  --attach-policy-arn arn:aws:iam::730335550052:policy/AWSLoadBalancerControllerIAMPolicy \
+  --override-existing-serviceaccounts \
+  --approve
+
+************************download aws load balancer controller for helm deployment******************
+helm repo add eks https://aws.github.io/eks-charts
+helm repo update
+kubectl apply -k github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=master
+
+**********************deploy alb pod *********************************************
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=my-awesome-cluster \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller
+
+*****************************check if everything is running fine***************************** 
+kubectl get pods -n kube-system aws-load-balancer-controller
+kubectl -n kube-system rollout status deployment aws-load-balancer-controller
+
+
+if everything working fine  then you can proceed further with your application deployment using helm charts.
+
+
+>>>>>>>>>>>>> Deploying Application on EKS Cluster <<<<<<<<<<<<< (inside app folder)
+kubectl create -f namespace.yaml
+kubectl create -f deploye.yaml
+kubectl create -f service.yaml
+kubectl create -f ingress.yaml

@@ -1,0 +1,60 @@
+ 1  cat > #!/bin/bash
+    2  # Update package lists and upgrade installed packages
+    3  apt-get update -y && apt-get upgrade -y
+    4  ls -l
+    5  cat > install.sh
+    6  sh install.sh
+    7  cat > createcluster.yaml
+    8  ekactl create cluster -f createcluster.yaml
+    9  eksctl create cluster -f createcluster.yaml
+   10  vim createcluster.yaml
+   11  eksctl create cluster -f createcluster.yaml
+   12  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+   13  chmod 700 get_helm.sh
+   14  ./get_helm.sh
+   15  helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
+   16  helm repo add incubator https://charts.helm.sh/incubator
+   17  helm install incubator/aws-alb-ingress-controller --set clusterName=my-awesome-cluster --set autoDiscoverAwsRegion=true --set autoDiscoverAwsVpcID=true --name app --namespace kube-system
+   18  helm install incubator/aws-alb-ingress-controller --set clusterName=my-awesome-cluster --set autoDiscoverAwsRegion=true --set autoDiscoverAwsVpcID=true --namespace kube-system
+   19  helm install app incubator/aws-alb-ingress-controller --set clusterName=my-awesome-cluster --set autoDiscoverAwsRegion=true --set autoDiscoverAwsVpcID=true --namespace kube-system
+   20  kubectl --namespace=kube-system get pods -l "app.kubernetes.io/name=aws-alb-ingress-controller,app.kubernetes.io/instance=app"
+   21  kubectl logs --namespace kube-system $(kubectl get po --namespace kube-system | egrep -o [a-zA-Z0–9-]+alb-ingress[a-zA-Z0–9-]+)
+   22  kubectl --namespace=kube-system get pods -l "app.kubernetes.io/name=aws-alb-ingress-controller,app.kubernetes.io/instance=app"
+   23  kubectl logs app-aws-alb-ingress-controller-bf5d8854d-gqlt2
+   24  kubectl describe pod app-aws-alb-ingress-controller-bf5d8854d-gqlt2
+   25  kubectl --namespace=kube-system get pods -l "app.kubernetes.io/name=aws-alb-ingress-controller,app.kubernetes.io/instance=app"
+   26  kubectl describe pod app-aws-alb-ingress-controller-bf5d8854d-gqlt2 -n kube-system
+   27  curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.2.0/docs/install/iam_policy.json
+   28  aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json
+   29  eksctl create iamserviceaccount --cluster my-awesome-cluster --region ap-south-1 --namespace kube-system --name aws-load-balancer-controller --attach-policy-arn arn:aws:iam::730335550052:policy/AWSLoadBalancerControllerIAMPolicy --override-existing-serviceaccounts --approve
+   30  eksctl utils associate-iam-oidc-provider --region ap-south-1 --cluster my-awesome-cluster --approve
+   31  eksctl create iamserviceaccount --cluster my-awesome-cluster --region ap-south-1 --namespace kube-system --name aws-load-balancer-controller --attach-policy-arn arn:aws:iam::730335550052:policy/AWSLoadBalancerControllerIAMPolicy --override-existing-serviceaccounts --approve
+   32  helm repo update
+   33  kubectl apply -k github.com/aws/eks-charts/stable/aws-load-balancer-controller/crds?ref=master
+   34  helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=my-awesome-cluster --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+   35  kubectl logs --namespace kube-system $(kubectl get po --namespace kube-system | egrep -o [a-zA-Z0–9-]+alb-ingress[a-zA-Z0–9-]+)
+   36  kubectl get pods -n kube-system
+   37  helm repo add eks https://aws.github.io/eks-charts
+   38  helm repo update eks
+   39  kubectl get deployment -n kube-system aws-load-balancer-controller
+   40  kubectl get crd
+   41  kubectl get deployment -n kube-system aws-load-balancer-controller
+   42  kubectl -n kube-system rollout status deployment aws-load-balancer-controller
+   43  ls -l
+   44  mkdir app
+   45  cd app/
+   46  ls -l
+   47  cat deploye.yaml
+   48  cat > deploye.yaml
+   49  ls -l
+   50  vim deploye.yaml
+   51  vim ingress.yaml
+   52  cat > ingress.yaml
+   53  vim ingress.yaml
+   54  sl -l
+   55  ls -l
+   56  kubectl create -f deploye.yaml
+   57  kubectl create -f ingress.yaml
+   58  ls -l
+   59  vim ingress.yaml
+   60  history

@@ -1,0 +1,37 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: my-awesome-cluster
+  region: ap-south-1
+  version: "1.29"
+managedNodeGroups:
+  - name: my-awesome-nodegroup
+    amiFamily: AmazonLinux2
+    instanceType: t3a.small
+    spot: false
+    minSize: 1
+    maxSize: 2
+    privateNetworking: true
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "1"
+      k8s.io/cluster-autoscaler/my-awesome-cluster: "1"
+    securityGroups:
+      attachIDs:
+        - sg-0de6ddde61a092bd5
+    iam:
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+vpc:
+  subnets:
+    private:
+      ap-south-1a:
+        id: subnet-0b1d0b93bea96ea25
+      ap-south-1b:
+        id: subnet-000223eb7a5635610
+  clusterEndpoints:
+    publicAccess: false
+    privateAccess: true
