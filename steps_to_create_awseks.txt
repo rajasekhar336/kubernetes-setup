@@ -46,8 +46,18 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   --set serviceAccount.name=aws-load-balancer-controller
 
 *****************************check if everything is running fine***************************** 
-kubectl get pods -n kube-system aws-load-balancer-controller
+ kubectl get pods -n kube-system
 kubectl -n kube-system rollout status deployment aws-load-balancer-controller
+
+
+>>>>>>>>>>>if jenkins intergratio<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< (files in jenkinsfolder)
+kubectl create serviceaccount jenkins
+kubectl create -f jenkins.yaml         
+kubectl create -f jenkinstoken.yaml
+
+kubectl get secrets jenkins -o jsonpath='{.data.token}' | base64 -d
+
+
 
 
 if everything working fine  then you can proceed further with your application deployment using helm charts.
