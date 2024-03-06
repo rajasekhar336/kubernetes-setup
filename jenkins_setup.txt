@@ -1,0 +1,92 @@
+we are deploying php-mysql project using git,jenkins,docker (ecr) and kubernetes(eks).
+
+Step 1 —
+Log in to your AWS Console and search for EC2. 
+Click on Launch Instance. You can name it as “jenkins-cicd-pipeline” (select as t2.medium instance ) in this practical.
+Jenkins works on Port 8080, configure the Security Group. Add Custom TCP Port 8080 to access Jenkins using the Public IP Address of the EC2 Instance and launch it.
+
+
+Step 2- Install and setup Jenkins:-
+
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+java --version
+
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt-get update
+
+sudo apt-get install jenkins
+
+sudo systemctl start jenkins && sudo systemctl enable jenkins
+
+sudo apt install apache2 -y
+sudo systemctl enable apache2 && sudo systemctl start apache2
+
+vim /etc/apache2/sites-available/000-default.conf
+
+ProxyRequests     Off
+    ProxyPreserveHost On
+    AllowEncodedSlashes NoDecode
+
+    <Proxy http://localhost:8080/*>
+      Order deny,allow
+      Allow from all
+    </Proxy>
+
+    ProxyPass         /  http://localhost:8080/ nocanon
+    ProxyPassReverse  /  http://localhost:8080/
+
+
+sudo a2enmod proxy && sudo a2enmod proxy_http && sudo a2enmod headers && sudo systemctl restart apache2
+
+
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+ -----  update visudo and assign administration privileges to jenkins user
+ sudo vi /etc/sudoers
+ jenkins ALL=(ALL) NOPASSWD: ALL
+ sudo su - jenkins
+sudo apt install docker.io
+docker --version
+docker ps
+sudo usermod -aG docker jenkins
+sudo docker ps
+sudo reboot
+
+ sudo su - jenkins
+sudo apt install awscli -y
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+sudo apt install unzip -y
+unzip awscliv2.zip
+sudo ./aws/install --update
+aws --version
+
+aws configure
+
+$ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+$ chmod +x ./kubectl
+$ sudo mv ./kubectl /usr/local/bin
+$ kubectl version
+
+
+$ curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+$ sudo mv /tmp/eksctl /usr/local/bin
+$ eksctl version
+
+
+eksctl create cluster --name new-eks-cluster1 --version 1.24 --region us-west-1 --nodegroup-name worker-nodes --node-type t2.micro --nodes 2
+
+eksctl create cluster --name anji --version 1.29 --region us-west-1 --nodegroup-name worker-nodes --node-type t2.micro --nodes 2
+
+
+Step 8 — Add Docker and Github credentials on Jenkins
+Goto -> Jenkins -> Manage Jenkins -> Manage Credentials -> add it
+
+
+
