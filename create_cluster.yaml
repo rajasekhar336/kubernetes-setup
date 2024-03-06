@@ -17,7 +17,7 @@ managedNodeGroups:
       k8s.io/cluster-autoscaler/my-awesome-cluster: "1"
     securityGroups:
       attachIDs:
-        - sg-03cad8b4fcc814448
+        - sg-05f2412bc14ed9a5c
     iam:
       attachPolicyARNs:
         - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
@@ -29,9 +29,9 @@ vpc:
   subnets:
     private:
       ap-south-1a:
-        id: subnet-0f0fa796d046c25bf
+        id: subnet-0e07c2e24f8b3ef8a
       ap-south-1b:
-        id: subnet-0124ee9ea61a8e564
+        id: subnet-06123d4938963efb7
   clusterEndpoints:
     publicAccess: false
     privateAccess: true
